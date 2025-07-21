@@ -43,19 +43,19 @@
 ### 💻 Homepage (With data)
 ![Page UI Screenshot 2: Pi chart with some data](./public/screenshots/homepage-withData.png)
 
-### 💻 Homepage: Offline warning
+### 💻 Homepage: Offline warning ⚠️
 ![Page UI Screenshot 2: Pi chart with some data](./public/screenshots/homepage-offlineWarning.png)
 
-### 🧩 Adding income/expenses: Categories 
-![Form UI Screenshot 1: Categories Preview](./public/screenshots/form-categories.png)
-
-### 💻 Homepage: Filters and Transactions List
+### 💻 Homepage: Filters section and Transactions List
 ![Page UI Screenshot 3: Filters and transactions section of the page with some data](./public/screenshots/homepage-filtersSection.png)
 
-### 🧩 Filters: By month of transaction
+### 🔍 Adding income/expenses: Categories 
+![Form UI Screenshot 1: Categories Preview](./public/screenshots/form-categories.png)
+
+### 🔍 Filters: By month of transaction
 ![Form UI Screenshot 2: Preview of the month filter](./public/screenshots/filter-months.png)
 
-### 🧩 Filters: By type of transaction
+### 🔍 Filters: By type of transaction
 ![Form UI Screenshot 2: Preview of the month filter](./public/screenshots/filters-types.png)
 
 ### 🎙️ Voice Commands: Taking input of command from user (Example in this case: "Expense 10000 into Electricity Bill, category bills")

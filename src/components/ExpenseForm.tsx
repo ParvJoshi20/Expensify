@@ -263,7 +263,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
             <Plus className="h-5 w-5" />
             Add {formData.type === 'expense' ? 'Expense' : 'Income'}
           </button>
-          <label className="block text-sm font-medium text-purple-300 mb-2 font-poppins">
+          <label className="block text-xs font-medium text-purple-300 mb-2 font-poppins">
               Note: Try inputting voice commands like "Expense 1200 into gym membership category health".
           </label>
         </form>

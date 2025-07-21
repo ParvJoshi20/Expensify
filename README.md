@@ -29,7 +29,7 @@
 
 ## 🌐 Live Demo
 
-🔗 [**Launch the App Here**](#)  
+🔗 [**Launch the App Here**](https://expensify-voice-powered-expense-tracker.vercel.app/)  
 <!-- Replace this with your actual hosted link, e.g., on Vercel or Netlify -->
 
 ---

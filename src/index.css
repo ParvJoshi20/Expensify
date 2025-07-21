@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-green: #39FF14;
+  --purple: #9B59B6;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-green) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--neon-green);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #2de00d;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', monospace;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.text-neon-green {
+  color: var(--neon-green);
+}
+
+.bg-neon-green {
+  background-color: var(--neon-green);
+}
+
+.border-neon-green {
+  border-color: var(--neon-green);
+}
+
+/* Custom animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 15px var(--neon-green);
+  }
+  50% {
+    box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 30px var(--neon-green);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Custom gradient backgrounds */
+.cyber-gradient {
+  background: linear-gradient(135deg, 
+    rgba(57, 255, 20, 0.1) 0%, 
+    rgba(155, 89, 182, 0.1) 50%, 
+    rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Enhanced focus states */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 1px var(--neon-green), 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+/* Button hover effects */
+button:hover {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .grid-cols-1 {
+    gap: 1rem;
+  }
+}
+
+/* Loading animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse animation for active elements */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Selection highlighting */
+::selection {
+  background-color: var(--neon-green);
+  color: black;
+}
+
+::-moz-selection {
+  background-color: var(--neon-green);
+  color: black;
+}

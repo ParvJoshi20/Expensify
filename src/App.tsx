@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Summary } from './components/Summary';
 import { ExpenseForm } from './components/ExpenseForm';
@@ -7,34 +7,34 @@ import { ExpenseList } from './components/ExpenseList';
 import { Watermark } from './components/Watermark';
 import { ExpenseChart } from './components/ExpenseChart';
 import { Expense } from './types';
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 function App() {
-  const [expenses, setExpenses] = useState<Expense[]>([
-    {
-      id: '1',
-      amount: 2500,
-      description: 'Salary Credit',
-      category: 'Other',
-      date: '2025-01-15',
-      type: 'income'
-    },
-    {
-      id: '2',
-      amount: 250,
-      description: 'Coffee and breakfast',
-      category: 'Food & Dining',
-      date: '2025-01-15',
-      type: 'expense'
-    },
-    {
-      id: '3',
-      amount: 180,
-      description: 'Uber ride to office',
-      category: 'Transportation',
-      date: '2025-01-14',
-      type: 'expense'
-    }
-  ]);
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>("expenses", []);
+  // {
+    //   id: '1',
+    //   amount: 2500,
+    //   description: 'Salary Credit',
+    //   category: 'Other',
+    //   date: '2025-01-15',
+    //   type: 'income'
+    // },
+    // {
+    //   id: '2',
+    //   amount: 250,
+    //   description: 'Coffee and breakfast',
+    //   category: 'Food & Dining',
+    //   date: '2025-01-15',
+    //   type: 'expense'
+    // },
+    // {
+    //   id: '3',
+    //   amount: 180,
+    //   description: 'Uber ride to office',
+    //   category: 'Transportation',
+    //   date: '2025-01-14',
+    //   type: 'expense'
+    // } // Add these into the [] of the array for testing purposes
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -61,6 +61,27 @@ function App() {
       return categoryMatch && monthMatch && typeMatch;
     });
   }, [expenses, selectedCategory, selectedMonth, selectedType]);
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      setIsDismissed(false); // Reset dismissal when online again
+    };
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
@@ -105,10 +126,25 @@ function App() {
             filteredExpenses={filteredExpenses}
           />
         </main>
+
+        {!isOnline && <div className="h-12" />}
+
+        {!isOnline && !isDismissed && (
+        <div className="fixed bottom-0 sm:bottom-0 mb-12 sm:mb-0 left-0 w-full bg-[#FF073A] text-white text-sm sm:text-base text-center py-3 px-4 font-medium font-poppins z-50 shadow-md">
+          <button
+            className="absolute top-1 right-2 text-white text-xl font-bold leading-none hover:text-gray-300 transition"
+            onClick={() => setIsDismissed(true)}
+          >
+            &times;
+          </button>
+          ⚠️ You’re offline. Voice Commands will not be available and changes will be saved locally.
+        </div>
+      )}
       </div>
 
       <Watermark />
     </div>
+    
   );
 }
 

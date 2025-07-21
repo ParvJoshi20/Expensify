@@ -42,9 +42,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-3 py-2 text-purple-200 focus:border-neon-green focus:outline-none focus:ring-1 focus:ring-neon-green transition-all duration-300"
           >
-            <option value="">All Categories</option>
+            <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="">All Categories</option>
             {CATEGORIES.map(category => (
-              <option key={category} value={category}>
+              <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' key={category} value={category}>
                 {category}
               </option>
             ))}
@@ -62,7 +62,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-3 py-2 text-purple-200 focus:border-neon-green focus:outline-none focus:ring-1 focus:ring-neon-green transition-all duration-300"
           >
             {months.map(month => (
-              <option key={month} value={month}>
+              <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' key={month} value={month}>
                 {month}
               </option>
             ))}
@@ -78,9 +78,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onChange={(e) => setSelectedType(e.target.value)}
             className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-3 py-2 text-purple-200 focus:border-neon-green focus:outline-none focus:ring-1 focus:ring-neon-green transition-all duration-300"
           >
-            <option value="">All Types</option>
-            <option value="expense">Expenses</option>
-            <option value="income">Income</option>
+            <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="">All Types</option>
+            <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="expense">Expenses</option>
+            <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="income">Income</option>
           </select>
         </div>
       </div>

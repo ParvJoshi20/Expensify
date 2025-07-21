@@ -6,6 +6,13 @@ interface ExpenseFormProps {
   onAddExpense: (expense: Expense) => void;
 }
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
   const [formData, setFormData] = useState<ExpenseFormData>({
     amount: '',
@@ -19,7 +26,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.amount || !formData.description) {
       return;
     }
@@ -42,48 +49,125 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
     });
   };
 
-  const handleVoiceRecord = async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Voice recording is not supported in your browser');
-      return;
+  const normalizeCategory = (spoken: string): string => {
+  const spokenLower = spoken.toLowerCase();
+
+  // Try exact match first
+  let match = CATEGORIES.find(
+    (cat) => cat.toLowerCase() === spokenLower
+  );
+
+  if (match) return match;
+
+  // Try partial match (e.g., "healthcare" -> "Health")
+  match = CATEGORIES.find(
+    (cat) => spokenLower.includes(cat.toLowerCase()) || cat.toLowerCase().includes(spokenLower)
+  );
+
+  return match || CATEGORIES[0]; // fallback
+};
+
+  const parseVoiceInput = (transcript: string) => {
+  try {
+    const input = transcript.toLowerCase();
+
+    // Extract type
+    const type = input.includes("income") ? "income" : "expense";
+
+    // Extract amount (first number)
+    const amountMatch = input.match(/(?:rs\.?|₹)?\s?(\d+(\.\d+)?)/);
+    const amount = amountMatch ? amountMatch[1] : "";
+
+    // Extract category
+    const categoryMatch = input.match(/(?:category|in|under)\s+([a-zA-Z &]+)/);
+    const category = categoryMatch ? categoryMatch[1].trim() : "";
+    
+
+    // Extract description
+    let description = "";
+    const descMatch = input.match(/(?:into|for|on)\s+(.+?)(?:\s+(category|in|under)|$)/);
+    if (descMatch && descMatch[1]) {
+      description = descMatch[1].trim();
     }
 
-    if (isRecording) {
-      setIsRecording(false);
-      setIsProcessing(true);
-      
-      // Simulate processing delay
-      setTimeout(() => {
-        // Mock transcription result
-        const mockTranscriptions = [
-          { description: 'Coffee and breakfast', amount: '250', category: 'Food & Dining' },
-          { description: 'Uber ride to office', amount: '180', category: 'Transportation' },
-          { description: 'Grocery shopping', amount: '1500', category: 'Groceries' },
-          { description: 'Movie tickets', amount: '400', category: 'Entertainment' }
-        ];
-        
-        const mockResult = mockTranscriptions[Math.floor(Math.random() * mockTranscriptions.length)];
-        
-        setFormData(prev => ({
-          ...prev,
-          description: mockResult.description,
-          amount: mockResult.amount,
-          category: mockResult.category as any
-        }));
-        
-        setIsProcessing(false);
-      }, 2000);
-    } else {
-      setIsRecording(true);
+    // Capitalize fields
+    const cap = (str: string) =>
+      str
+        .split(" ")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
+
+    return {
+      type,
+      amount,
+      description: cap(description),
+      category: cap(category),
+    };
+  } catch (err) {
+    console.error("Parsing failed:", err);
+    return null;
+  }
+};
+
+
+  const handleVoiceRecord = async () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Your browser does not support voice recognition.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+
+  setIsRecording(true);
+  setIsProcessing(false);
+
+  recognition.start();
+
+  recognition.onresult = (event: any) => {
+    const transcript = event.results[0][0].transcript;
+    console.log("Transcript:", transcript);
+
+    const parsed = parseVoiceInput(transcript);
+
+    if (parsed) {
+      setFormData((prev) => ({
+        ...prev,
+        type: parsed.type as 'expense' | 'income',
+        amount: parsed.amount,
+        description: parsed.description,
+        category: normalizeCategory(parsed.category),
+      }));
     }
+
+    setIsRecording(false);
+    setIsProcessing(false);
   };
+
+  recognition.onerror = () => {
+    setIsRecording(false);
+    setIsProcessing(false);
+    alert("Could not recognize your voice. Please try again.");
+  };
+
+  recognition.onend = () => {
+    setIsRecording(false);
+    setIsProcessing(false);
+  };
+};
+
+
 
   return (
     <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-6 mb-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-neon-green/5 via-transparent to-purple-500/5" />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-purple-400 font-orbitron">ADD EXPENSE</h2>
+          <h2 className="text-xl font-bold text-purple-400 font-orbitron">ADD INCOME OR EXPENSE</h2>
           <button
             onClick={handleVoiceRecord}
             disabled={isProcessing}
@@ -119,8 +203,8 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as 'expense' | 'income' }))}
                 className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-4 py-3 text-purple-200 focus:border-neon-green focus:outline-none focus:ring-1 focus:ring-neon-green transition-all duration-300"
               >
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
+                <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="expense">Expense</option>
+                <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' value="income">Income</option>
               </select>
             </div>
 
@@ -164,7 +248,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
               className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-4 py-3 text-purple-200 focus:border-neon-green focus:outline-none focus:ring-1 focus:ring-neon-green transition-all duration-300"
             >
               {CATEGORIES.map(category => (
-                <option key={category} value={category}>
+                <option className='bg-black/75 border border-purple-500/50 rounded-lg px-4 py-3 text-purple-200' key={category} value={category}>
                   {category}
                 </option>
               ))}
@@ -179,6 +263,9 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onAddExpense }) => {
             <Plus className="h-5 w-5" />
             Add {formData.type === 'expense' ? 'Expense' : 'Income'}
           </button>
+          <label className="block text-sm font-medium text-purple-300 mb-2 font-poppins">
+              Note: Try inputting voice commands like "Expense 1200 into gym membership category health".
+          </label>
         </form>
 
         {isRecording && (

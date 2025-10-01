@@ -1,6 +1,6 @@
 # 🧾 Expensify — Voice-Enabled Expense Tracker
 
-**Expensify** is a sleek, voice-powered expense tracker designed to make recording income and expenses effortless. Whether you're online or offline, Expensify keeps your finances in check with smart parsing, responsive design, and local data storage — all with a neon-futuristic touch.
+**Expensify** is a sleek, voice-powered expense tracker designed to make recording income and expenses effortless. Whether you're online or offline, Expensify keeps your finances in check with smart parsing, responsive design, and local data storage — all with a neon-futuristic touch. This is a project that helps people to manage their daily and monthly expenses with a clean UI and modern features.
 
 ---
 
